@@ -2,6 +2,7 @@
 import Button from 'primevue/button'
 
 const theme = useThemeStore()
+const user = useCurrentUser()
 useAsyncData(async () => {
   theme.init()
   return true
@@ -22,9 +23,13 @@ useAsyncData(async () => {
       </NuxtLink>
 
       <div flex gap3 items-center>
-        <NuxtLink to="/login">
+        <NuxtLink v-if="!user" to="/login">
           <Button label="login" link>Login</Button>
         </NuxtLink>
+        <NuxtLink v-else to="/dashboard">
+          <Button label="Dashboard" link>Dashboard</Button>
+        </NuxtLink>
+
         <CommonColorModeButton />
       </div>
     </nav>

@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     'nuxt-vuefire'
   ],
   alias: {
+    // Issue: https://github.com/unjs/nitro/issues/1277
     "jose": resolve(__dirname, "./node_modules/jose/dist/browser/index.js"),
   },
   css: [
@@ -21,6 +22,10 @@ export default defineNuxtConfig({
   },
   vuefire: {
     auth: true,
+    admin: {
+      // For development only, use FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env in prod
+      serviceAccount: resolve(__dirname, './firebase-adminsdk.json')
+    },
     config: {
       apiKey: "AIzaSyBYN9qy98CUX2eSgEf54zhTpVn1bF7I3Bg",
       authDomain: "incredible-sstonks.firebaseapp.com",
