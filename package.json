@@ -9,12 +9,16 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@firebase/app-types": "^0.9.0",
     "@iconify-json/tabler": "^1.1.79",
     "@pinia/nuxt": "^0.4.11",
     "@types/node": "^18",
     "@unocss/nuxt": "^0.53.1",
+    "firebase-admin": "^11.9.0",
     "nuxt": "^3.5.2",
+    "nuxt-vuefire": "^0.1.6",
     "pinia": "^2.1.4",
-    "primevue": "^3.29.2"
+    "primevue": "^3.29.2",
+    "vuefire": "^3.1.0"
   }
 }
