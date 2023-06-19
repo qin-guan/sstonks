@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     transpile: ['primevue']
   },
   vuefire: {
+    auth: true,
     config: {
       apiKey: "AIzaSyBYN9qy98CUX2eSgEf54zhTpVn1bF7I3Bg",
       authDomain: "incredible-sstonks.firebaseapp.com",

@@ -14,3 +14,13 @@ html {
   --at-apply: transition duration-100 ease-in-out;
   --at-apply: font-$font-family;
 }
+
+a.nostyle:link {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+a.nostyle:visited {
+  text-decoration: inherit;
+  color: inherit;
+}

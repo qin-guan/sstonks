@@ -17,13 +17,22 @@ useAsyncData(async () => {
     </Head>
 
     <nav p-3 flex justify-between items-center class="text-$primary-color">
-      <span font-bold>SSTonks</span>
+      <NuxtLink to="/" class="nostyle">
+        <span font-bold>SSTonks</span>
+      </NuxtLink>
 
-      <CommonColorModeButton />
+      <div flex gap3 items-center>
+        <NuxtLink to="/login">
+          <Button label="login" link>Login</Button>
+        </NuxtLink>
+        <CommonColorModeButton />
+      </div>
     </nav>
 
-    <main>
+    <main h-full>
       <slot />
     </main>
   </div>
 </template>
+<style scoped>
+</style>
