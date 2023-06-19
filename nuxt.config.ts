@@ -1,4 +1,4 @@
-import {createResolver} from '@nuxt/kit'
+import { createResolver } from '@nuxt/kit'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -22,7 +22,11 @@ export default defineNuxtConfig({
   },
   vuefire: {
     auth: true,
-     config: {
+    admin: {
+      // For development only, use FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env in prod
+      serviceAccount: resolve(__dirname, './firebase-adminsdk.json')
+    },
+    config: {
       apiKey: "AIzaSyBYN9qy98CUX2eSgEf54zhTpVn1bF7I3Bg",
       authDomain: "incredible-sstonks.firebaseapp.com",
       projectId: "incredible-sstonks",
