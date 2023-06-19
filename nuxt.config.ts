@@ -1,3 +1,7 @@
+import {createResolver} from '@nuxt/kit'
+
+const { resolve } = createResolver(import.meta.url)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
@@ -5,6 +9,9 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     'nuxt-vuefire'
   ],
+  alias: {
+    "jose": resolve(__dirname, "./node_modules/jose/dist/browser/index.js"),
+  },
   css: [
     'primevue/resources/primevue.css',
     '~/styles/global.css'
