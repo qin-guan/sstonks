@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 
 const theme = useThemeStore()
-const route = useRoute()
-
-const user = useCurrentUser()
-
 useAsyncData(async () => {
   theme.init()
   return true
@@ -26,18 +21,10 @@ useAsyncData(async () => {
           <span font-bold class="text-$primary-color">SSTonks</span>
         </NuxtLink>
 
-        <span v-if="route.path === '/dashboard'" opacity-70>/ Dashboard</span>
+        <span opacity-70>/ Dashboard</span>
       </div>
 
       <div flex gap3 items-center>
-        <NuxtLink v-if="!user" to="/login">
-          <Button label="login" link>Login</Button>
-        </NuxtLink>
-
-        <NuxtLink v-else to="/dashboard">
-          <Button label="Dashboard" link>Dashboard</Button>
-        </NuxtLink>
-
         <CommonColorModeButton />
       </div>
     </nav>
