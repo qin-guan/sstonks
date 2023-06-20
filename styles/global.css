@@ -24,3 +24,7 @@ a.nostyle:visited {
   text-decoration: inherit;
   color: inherit;
 }
+
+* {
+  animation-duration: 0s;
+}
