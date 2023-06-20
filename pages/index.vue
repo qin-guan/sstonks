@@ -1,10 +1,9 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['anon']
+  middleware: ['anon'],
 })
 </script>
 
 <template>
-  <div>
-  </div>
+  <div />
 </template>

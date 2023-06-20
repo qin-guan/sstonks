@@ -4,17 +4,15 @@ import Button from 'primevue/button'
 const theme = useThemeStore()
 const route = useRoute()
 
-const user = useCurrentUser()
-
-useAsyncData(async () => {
+const { data: user } = useAsyncData(async () => {
   theme.init()
-  return true
+  const user = useCustomCurrentUser()
+  return user.value
 })
 </script>
 
 <template>
   <div h-full flex="~ col">
-
     <Head>
       <Link rel="stylesheet" :href="theme.link" />
       <Link rel="prefetch" as="style" :href="theme.preload" />
@@ -31,11 +29,15 @@ useAsyncData(async () => {
 
       <div flex gap3 items-center>
         <NuxtLink v-if="!user" to="/login">
-          <Button label="login" link>Login</Button>
+          <Button label="login" link>
+            Login
+          </Button>
         </NuxtLink>
 
         <NuxtLink v-else to="/dashboard">
-          <Button label="Dashboard" link>Dashboard</Button>
+          <Button label="Dashboard" link>
+            Dashboard
+          </Button>
         </NuxtLink>
 
         <CommonColorModeButton />
@@ -47,5 +49,3 @@ useAsyncData(async () => {
     </main>
   </div>
 </template>
-<style scoped>
-</style>
