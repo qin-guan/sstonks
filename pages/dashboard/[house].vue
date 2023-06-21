@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import Toast from 'primevue/toast'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 import Divider from 'primevue/divider'
 import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Dialog from 'primevue/dialog'
+import { useToast } from 'primevue/usetoast'
+import { setHousePoints } from '~/composables/house'
 
 definePageMeta({
   layout: 'dash',
@@ -11,49 +16,70 @@ definePageMeta({
 
 const sidebar = ref(true)
 
+const toast = useToast()
 const route = useRoute()
-const { data, pending, error } = useHouse(route.params.house as string)
+const db = useFirestore()
+const { data, pending, refresh, error } = useHouse(db, route.params.house as string)
 
 const formData = reactive({
   points: 0,
+  pending: false,
   modalVisible: false,
 })
+
+watch(pending, (value, oldValue) => {
+  if (oldValue && !value)
+    formData.points = data.value?.points ?? 0
+})
+
+async function savePoints() {
+  formData.pending = true
+  try {
+    await setHousePoints(db, route.params.house as string, formData.points)
+    await refresh()
+  }
+  catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: JSON.stringify(err),
+    })
+  }
+  formData.pending = false
+  formData.modalVisible = false
+}
 </script>
 
 <template>
-  <div p-3 h-full px10 lg:px15>
+  <div p-3 h-full px3 md:px10 lg:px15>
+    <Toast />
     <div v-if="error">
       {{ error }}
     </div>
-    <div v-else h-full>
+    <div v-else h-full flex flex-col>
+      <Button icon="true" plain text size="small" self-end @click="sidebar = !sidebar">
+        <div v-if="sidebar" i-tabler-chevron-right />
+        <div v-else i-tabler-chevron-left />
+      </Button>
       <div flex mt-3 h-full pb8>
-        <div flex-1 relative overflow-x-scroll>
-          <div absolute inset-0 overflow-hidden>
-            <div flex justify-between>
-              <h2 font-semibold text-lg>
-                History
-              </h2>
-              <Button text plain icon="true" @click="sidebar = !sidebar">
-                <div v-if="sidebar" i-tabler-chevron-right />
-                <div v-else i-tabler-info-square-rounded />
-              </Button>
-            </div>
-
-            <div mt-3>
+        <div flex-1 flex flex-col>
+          <h2 font-semibold text-lg>
+            History
+          </h2>
+          <CommonScrollArea horizontal>
+            <div mt-3 min-w-xs>
               <Skeleton v-if="pending" height="10rem" width="100%" />
 
-              <div v-else class="min-w-[100px]" flex flex-col divide-y divide-white divide-opacity-10>
-                <div v-for="txn in data?.transactions" :key="txn.id" flex justify-between p2 py4>
-                  <span>{{ txn.data.user }}</span>
-                  <span>{{ txn.data.delta }}</span>
-                </div>
-              </div>
+              <DataTable v-else :value="data?.transactions">
+                <Column field="data.user" header="User" />
+                <Column field="data.delta" header="Delta" />
+              </DataTable>
             </div>
-          </div>
+          </CommonScrollArea>
         </div>
 
         <Transition>
-          <div v-if="sidebar" flex items-start overflow-hidden min-w-md h-full>
+          <div v-if="sidebar" flex items-start overflow-hidden w-sm h-full>
             <Divider layout="vertical" />
 
             <div w-full p-3>
@@ -62,17 +88,19 @@ const formData = reactive({
               <div v-else>
                 <div flex justify-between items-center>
                   <span>Points</span>
-                  <Button icon="true" text size="small" @click="formData.modalVisible = true">
-                    {{ data?.points }}
-                  </Button>
+
+                  <Button :label="`${data?.points}`" text @click="formData.modalVisible = true" />
                 </div>
               </div>
             </div>
           </div>
         </Transition>
 
-        <Dialog v-model:visible="formData.modalVisible" modal header="Edit points" :style="{ width: '50vw' }">
-          <InputNumber v-model="formData.points" type="number" />
+        <Dialog v-model:visible="formData.modalVisible" modal header="Edit points">
+          <InputNumber id="points" v-model="formData.points" />
+          <template #footer>
+            <Button label="Save" :loading="formData.pending" @click="savePoints" />
+          </template>
         </Dialog>
       </div>
     </div>

@@ -1,8 +1,7 @@
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import type { Firestore } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 
-export function useHouses() {
-  const db = useFirestore()
-
+export function useHouses(db: Firestore) {
   return useLazyAsyncData('houses', async () => {
     const d = await getDocs(collection(db, 'houses'))
     return d.docs.map(doc => ({
@@ -13,9 +12,7 @@ export function useHouses() {
   }, { server: false })
 }
 
-export function useHouse(id: string) {
-  const db = useFirestore()
-
+export function useHouse(db: Firestore, id: string) {
   return useLazyAsyncData(`house-${id}`, async () => {
     const [house, txns] = await Promise.all([
       getDoc(doc(db, 'houses', id)),
@@ -38,4 +35,8 @@ export function useHouse(id: string) {
       }),
     }
   }, { server: false })
+}
+
+export async function setHousePoints(db: Firestore, id: string, points: number) {
+  return await setDoc(doc(db, 'houses', id), { points })
 }

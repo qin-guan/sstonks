@@ -7,7 +7,8 @@ definePageMeta({
 })
 
 const theme = useThemeStore()
-const { data, pending, error } = useHouses()
+const db = useFirestore()
+const { data, pending, error } = useHouses(db)
 
 const cardBgColors = computed<Record<string, string>>(() => {
   if (theme.mode === 'dark') {
