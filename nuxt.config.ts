@@ -4,10 +4,11 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   modules: [
     '@pinia/nuxt',
     '@unocss/nuxt',
-    'nuxt-vuefire',
+    '@vueuse/nuxt',
   ],
   alias: {
     // Issue: https://github.com/unjs/nitro/issues/1277
@@ -21,19 +22,20 @@ export default defineNuxtConfig({
   build: {
     transpile: ['primevue'],
   },
-  vuefire: {
-    auth: true,
-    admin: {
-      // For development only, use FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env in prod
-      serviceAccount: resolve(__dirname, './firebase-adminsdk.json'),
-    },
-    config: {
-      apiKey: 'AIzaSyBYN9qy98CUX2eSgEf54zhTpVn1bF7I3Bg',
-      authDomain: 'incredible-sstonks.firebaseapp.com',
-      projectId: 'incredible-sstonks',
-      storageBucket: 'incredible-sstonks.appspot.com',
-      messagingSenderId: '438193097420',
-      appId: '1:438193097420:web:efb6fab1139930b2479069',
-    },
+  appConfig: {
+    title: 'SSTonks',
   },
+  // vuefire: {
+  //   auth: true,
+  //   admin: {
+  //   },
+  //   config: {
+  //     apiKey: 'AIzaSyBYN9qy98CUX2eSgEf54zhTpVn1bF7I3Bg',
+  //     authDomain: 'incredible-sstonks.firebaseapp.com',
+  //     projectId: 'incredible-sstonks',
+  //     storageBucket: 'incredible-sstonks.appspot.com',
+  //     messagingSenderId: '438193097420',
+  //     appId: '1:438193097420:web:efb6fab1139930b2479069',
+  //   },
+  // },
 })

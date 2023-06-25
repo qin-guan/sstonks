@@ -1,44 +1,49 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 
-const theme = useThemeStore()
+const app = useNuxtApp()
 const route = useRoute()
+const config = useAppConfig()
+const { isAuthenticated } = useAuth(app.$firebase.auth)
 
-const { data: user } = useAsyncData(async () => {
-  theme.init()
-  const user = useCustomCurrentUser()
-  return user.value
+const isDashboard = computed(() => route.path.startsWith('/dashboard'))
+
+const breadcrumbs = computed(() => {
+  if (route.path === '/')
+    return []
+  const segments = route.path.split('/').slice(1)
+  return segments.map(s => s[0].toUpperCase() + s.slice(1))
 })
 </script>
 
 <template>
   <div h-full flex="~ col">
-    <Head>
-      <Link rel="stylesheet" :href="theme.link" />
-      <Link rel="prefetch" as="style" :href="theme.preload" />
-    </Head>
-
     <nav p-3 flex justify-between items-center>
-      <div flex gap3 items-center>
+      <div flex gap2 items-center>
         <NuxtLink to="/" class="nostyle">
-          <span font-bold class="text-$primary-color">SSTonks</span>
+          <span font-bold class="text-$primary-color">{{ config.title }}</span>
         </NuxtLink>
 
-        <span v-if="route.path === '/dashboard'" opacity-70>/ Dashboard</span>
+        <template v-for="crumb in breadcrumbs" :key="crumb">
+          <span opacity-70>/</span>
+          <span opacity-70>{{ crumb }}</span>
+        </template>
       </div>
 
       <div flex gap3 items-center>
-        <NuxtLink v-if="!user" to="/login">
-          <Button label="login" link>
-            Login
-          </Button>
-        </NuxtLink>
+        <template v-if="!isDashboard">
+          <NuxtLink v-if="!isAuthenticated" to="/login">
+            <Button label="login" link size="small">
+              Login
+            </Button>
+          </NuxtLink>
 
-        <NuxtLink v-else to="/dashboard">
-          <Button label="Dashboard" link>
-            Dashboard
-          </Button>
-        </NuxtLink>
+          <NuxtLink v-else to="/dashboard">
+            <Button label="Dashboard" link size="small">
+              Dashboard
+            </Button>
+          </NuxtLink>
+        </template>
 
         <CommonColorModeButton />
       </div>
@@ -49,3 +54,6 @@ const { data: user } = useAsyncData(async () => {
     </main>
   </div>
 </template>
+
+<style scoped>
+</style>

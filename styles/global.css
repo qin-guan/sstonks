@@ -6,9 +6,9 @@ body,
   padding: 0;
 }
 
-/* html.dark {
+html {
   color-scheme: dark;
-} */
+}
 
 html {
   --at-apply: transition duration-100 ease-in-out;

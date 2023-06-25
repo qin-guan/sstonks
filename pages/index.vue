@@ -1,6 +1,7 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['anon'],
+const config = useAppConfig()
+useSeoMeta({
+  title: config.title,
 })
 </script>
 

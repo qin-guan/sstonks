@@ -1,42 +1,53 @@
-import type { Firestore } from 'firebase/firestore'
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, limit, orderBy, query, setDoc } from 'firebase/firestore'
 
-export function useHouses(db: Firestore) {
-  return useLazyAsyncData('houses', async () => {
-    const d = await getDocs(collection(db, 'houses'))
-    return d.docs.map(doc => ({
+export const useHouses = createGlobalState(() => {
+  const app = useNuxtApp()
+
+  const housesRaw = useFirestore(collection(app.$firebase.db, 'houses'), [])
+  const houses = computed(() => {
+    return housesRaw.value?.map(doc => ({
       title: `${doc.id[0].toUpperCase()}${doc.id.slice(1)}`,
       id: doc.id,
-      points: doc.data().points,
+      points: doc.points,
     }))
-  }, { server: false })
-}
+  })
 
-export function useHouse(db: Firestore, id: string) {
-  return useLazyAsyncData(`house-${id}`, async () => {
-    const [house, txns] = await Promise.all([
-      getDoc(doc(db, 'houses', id)),
-      getDocs(collection(db, 'houses', id, 'transactions')),
-    ])
+  return houses
+})
 
-    const houseData = house.data()
+export function useHouse(id: string) {
+  const app = useNuxtApp()
 
-    return {
-      points: houseData?.points,
-      transactions: txns.docs.map((doc) => {
-        const txnData = doc.data()
-        return {
-          id: doc.id,
-          data: {
-            delta: txnData.delta,
-            user: txnData.user.path.split('/').pop(),
-          },
-        }
-      }),
-    }
-  }, { server: false })
-}
+  const user = useAuth(app.$firebase.auth)
+  const house = useFirestore(doc(app.$firebase.db, 'houses', id), {})
+  const txnsQuery = query(collection(app.$firebase.db, 'houses', id, 'transactions'), limit(10), orderBy('timestamp', 'desc'))
+  const txnsRaw = useFirestore(txnsQuery, [])
 
-export async function setHousePoints(db: Firestore, id: string, points: number) {
-  return await setDoc(doc(db, 'houses', id), { points })
+  const txns = computed(() => {
+    return txnsRaw.value?.map((value) => {
+      const timestamp = new Date(0)
+      timestamp.setUTCSeconds(value.timestamp.seconds)
+      return {
+        delta: value.delta,
+        id: value.id,
+        timestamp: timestamp.toLocaleDateString(),
+        user: value.user, // Email of the user
+      }
+    })
+  })
+
+  async function setPoints(points: number) {
+    const delta = points - house.value?.points
+    await Promise.all([addDoc(collection(app.$firebase.db, 'houses', id, 'transactions'), {
+      delta,
+      timestamp: new Date(),
+      user: user.user.value?.email,
+    }), setDoc(doc(app.$firebase.db, 'houses', id), { points })])
+  }
+
+  return {
+    house,
+    txns,
+    setPoints,
+  }
 }
