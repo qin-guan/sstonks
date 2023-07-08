@@ -19,7 +19,7 @@
     "@vueuse/firebase": "^10.2.0",
     "@vueuse/nuxt": "^10.2.0",
     "eslint": "^8.43.0",
-    "firebase": "^9.23.0",
+    "firebase": "^10.0.0",
     "nuxt": "^3.6.0",
     "pinia": "^2.1.4",
     "primevue": "^3.29.2"
