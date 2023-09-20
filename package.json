@@ -14,7 +14,7 @@
     "@iconify-json/tabler": "^1.1.79",
     "@pinia/nuxt": "^0.4.11",
     "@types/node": "^18.16.18",
-    "@unocss/nuxt": "^0.55.0",
+    "@unocss/nuxt": "^0.56.0",
     "@vueuse/core": "^10.2.0",
     "@vueuse/firebase": "^10.2.0",
     "@vueuse/nuxt": "^10.2.0",
